@@ -1,64 +1,77 @@
 import withLayout from 'lib/hoc/pages/withLayout';
-import { Button, Typography, Input } from 'antd';
-import { GetServerSideProps } from 'next';
+import { Button, Typography } from 'antd';
 import { useAppContext } from 'context/state';
 import styles from '../styles/pages/indexpage.module.scss';
-import User from 'common/components/User';
-import { get, post } from 'apis';
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
+import { getConversation } from 'apis/conversation';
+import { ConversationType } from 'apis/models/conversation';
+import Conversation from 'common/components/Conversation';
 
 const { Title } = Typography;
 
-const MyConversation = () => {  
-    const user = useAppContext();
-    const [title, setTitle] = useState('');  
-    const [conversations, setConversations]   = useState([]);
-    const { selectedContacts, userInfo: {id} } = user;    
+const MyConversation: React.FC = () => {
+  const user = useAppContext();
+  const router = useRouter();
+  const [conversations, setConversations] = useState<Array<ConversationType>>([]);
+  const {
+    userInfo: { id },
+  } = user;
 
-    useEffect(() => {
-      id && getMyConversations();           
-    }, []);
+  useEffect(() => {
+    getMyConversations();
+  }, []);
 
-    const getMyConversations = async () => {               
-      const data = await get(`/conversations/${id}`);
-      
-      console.log('data', data);
-      if (data && data.recent_messages.length > 0) {
-        setConversations(data.recent_messages);
-      }
+  const getMyConversations = async (): Promise<void> => {
+    const data = await getConversation();
+    if (data && data.length > 0) {
+      setConversations(data);
     }
+  };
 
+  const getValueFromProp = (item, prop): string => {
+    const lastMessage = item.last_message[0];
+    if (lastMessage) {
+      if (prop === 'sender_name') return lastMessage.sender_id == id ? 'You' : lastMessage[prop];
+      return lastMessage[prop];
+    }
+    return '';
+  };
 
-    const inputChangeHandler = (e) => {
-      const { target: { value }} = e;
-      setTitle(value);
-    }
-    const startConversation = () => {
-      const contactIds = selectedContacts?.map((item) => item.id);
-      const payload = {
-        title,
-        contact_ids: contactIds
-      }
-        post('/conversations', payload).then((res) => {
-          console.log(res);
-        })
-    }
+  const createNewConversation = (): void => {
+    router.push('/my-contacts');
+  };
+
+  const redirectToSpecificConversation = (id): void => {
+    router.push(`/start-conversation/${id}`);
+  };
+
   return (
     <>
-    <div className={styles.header}>
-      <Title level={2}>Your Conversations</Title>      
-    </div>
+      <div className={styles.header}>
+        <Title level={2}>Your Conversations</Title>
+      </div>
 
-    <div className={styles.conversations_wrapper}>
-    {conversations && conversations?.length > 0 && conversations?.map((item) => (
-      <div className={styles.single_conversation}> <User item={item} isSelectionDisabled /> </div>
-    ))}
-    </div>          
-    <div className={styles.start_conversation_footer}>        
-        <Button onClick={startConversation}>Start Conversation</Button>
-    </div>
-  </>
-)
-}
+      <div className={styles.conversations_wrapper}>
+        {conversations &&
+          conversations?.length > 0 &&
+          conversations?.map((item) => (
+            <div className={styles.single_conversation} key={item.id}>
+              <Conversation
+                title={item.title}
+                sender_name={getValueFromProp(item, 'sender_name')}
+                description={getValueFromProp(item, 'content')}
+                id={item.id}
+                redirectToSpecificConversation={redirectToSpecificConversation}
+              />
+            </div>
+          ))}
+      </div>
+      <div className={styles.start_conversation_footer}>
+        <Button onClick={createNewConversation}>Create New Conversation</Button>
+      </div>
+    </>
+  );
+};
 
 export default withLayout(MyConversation);

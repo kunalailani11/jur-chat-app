@@ -1,0 +1,27 @@
+.user_wrap {
+    display: flex;
+    flex: 1;
+    align-items: flex-start;
+    max-width: 100%;
+    cursor: pointer;
+    
+    .avatar {
+        margin-right: 16px;
+        background-color: #fff;
+        color: #000000;
+    }
+    .user_content {
+        color: #000000d9;
+        .title {
+            margin-bottom: 4px;
+            color: #000000d9;
+            font-size: 14px;
+            line-height: 1.5715;
+        }
+        .description {
+            color: #00000073;
+            font-size: 14px;
+            line-height: 1.5715;
+        }
+    }    
+}

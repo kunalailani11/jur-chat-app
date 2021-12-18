@@ -5,70 +5,82 @@ import { useAppContext } from 'context/state';
 import styles from '../../../styles/pages/indexpage.module.scss';
 import User from 'common/components/User';
 import { get, post } from 'apis';
+import { ConversationMessage } from 'apis/models/conversation';
 import { useEffect, useState } from 'react';
+import { getSpecificConversation, sendNewMessage } from 'apis/conversation';
+import Conversation from 'common/components/Conversation';
 
 const { Title } = Typography;
 
-const StartConversation = ({id}) => {  
-    const user = useAppContext();
-    const [title, setTitle] = useState('');  
-    const [messages, setMessages]   = useState([]);
-    const { selectedContacts } = user;    
+type StartConversationProps = {
+  id: string;
+};
 
-    useEffect(() => {
-      getConversations();           
-    }, []);
+const StartConversation: React.FC<StartConversationProps> = ({ id }) => {
+  const [title, setTitle] = useState<string>('');
+  const [newMessage, setNewMessage] = useState<string>('');
+  const [messages, setMessages] = useState<Array<ConversationMessage>>([]);
 
-    const getConversations = async () => {     
-      const data = await get(`/conversations/${id}`);
-      if (data) {
-        setTitle(data.title);
-          setMessages(data.messages);
-      }
+  useEffect(() => {
+    getConversations();
+  }, []);
+
+  const getConversations = async (): Promise<void> => {
+    const data = await getSpecificConversation(id);
+    if (data) {
+      console.log('data', data);
+      setTitle(data.title);
+      setMessages(data.recent_messages);
     }
+  };
 
-
-    const inputChangeHandler = (e) => {
-      const { target: { value }} = e;
-      setTitle(value);
-    }
-    const startConversation = () => {
-      const contactIds = selectedContacts?.map((item) => item.id);
-      const payload = {
-        title,
-        contact_ids: contactIds
-      }
-        post('/conversations', payload).then((res) => {
-          console.log(res);
-        })
-    }
+  const inputChangeHandler = (e): void => {
+    const {
+      target: { value },
+    } = e;
+    setNewMessage(value);
+  };
+  const sendMessage = (): void => {
+    const payload = {
+      content: newMessage,
+    };
+    sendNewMessage(id, payload).then(() => {
+      setNewMessage('');
+      getConversations();
+    });
+  };
   return (
     <>
-    <div className={styles.header}>
-      <Title level={2}>{title}</Title>      
-    </div>
-    <div className={styles.selected_contacts}>
-    {messages && messages?.length > 0 && messages?.map((item) => (
-        <User item={item} isSelectionDisabled /> 
-    ))}         
-    </div>
-    <div className={styles.start_conversation_footer}>
-        <Input name="conversation_topic" onChange={inputChangeHandler} />
-        <Button onClick={startConversation}>Start Conversation</Button>
-    </div>
-  </>
-)
-}
+      <div className={styles.header}>
+        <Title level={2}>{title}</Title>
+      </div>
+      <div className={styles.conversations_wrapper}>
+        {messages &&
+          messages?.length > 0 &&
+          messages?.map((item) => (
+            <Conversation title={item.sender_name} description={item.content} key={item.id} />
+          ))}
+      </div>
+      <div className={styles.start_conversation_footer}>
+        <Input
+          name="conversation_topic"
+          value={newMessage}
+          onChange={inputChangeHandler}
+          onPressEnter={inputChangeHandler}
+        />
+        <Button onClick={sendMessage}>Send</Button>
+      </div>
+    </>
+  );
+};
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const id = ctx.query['id'];
-  // const conversations = await get(`/conversations/${id}`);
-    return {
-        props: {
-            id,
-            // conversations
-        }
-    }
-  }
+  return {
+    props: {
+      id,
+    },
+  };
+};
 
 export default withLayout(StartConversation);
