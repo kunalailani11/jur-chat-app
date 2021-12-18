@@ -1,0 +1,71 @@
+.header {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  padding-top: 5rem;
+
+  :global {
+    h2 {
+      margin: 0;
+    }
+    h5,
+    h5.ant-typography {
+      margin-top: 5px;
+      color: #5f5f5f;
+      font-weight: 400;
+    }
+  }
+
+  .sub_content{
+    margin-top: 15px !important;
+  }
+}
+
+.no_conversation_header{
+  padding-top: 0rem;
+  height: 185px;
+}
+
+
+.no_conversations_contact_list_wrapper {
+  display: flex;
+  justify-content: center;
+  max-height: calc(100% - 280px);
+  overflow: auto;
+}
+
+.contact_list_wrapper {
+  display: flex;
+  justify-content: center;
+  max-height: calc(100% - 120px - 11rem);
+  overflow: auto;
+  margin-top: 1rem;
+}
+
+.conversations_wrapper {
+  max-height: calc(100% - 120px - 10rem);
+  margin: 2rem auto;
+  overflow: auto;
+
+  .single_conversation {
+    margin-bottom: 1rem;
+  }
+  
+}
+
+.continue_btn_wrap {
+  height: 50px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+}
+.selected_contacts {
+  columns: 2;
+  margin-bottom: 1rem;
+}
+.start_conversation_footer {
+  display: flex;
+  justify-content: space-between;
+}

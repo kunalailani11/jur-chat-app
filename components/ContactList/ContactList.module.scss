@@ -1,0 +1,11 @@
+.contact_list_wrapper {
+    height: 100%;
+
+    .contact_list {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px;
+        color: #000000d9;        
+    }
+}

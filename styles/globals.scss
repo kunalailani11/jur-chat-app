@@ -1,0 +1,18 @@
+.ant-layout {
+    width: 100%;
+    height: 100vh;
+    background-color: #e5e5e5;
+  
+    .content-row-wrapper {
+      height: 100%;
+      justify-content: center;
+      align-items: center;
+    }
+  
+    .content-column-wrapper {
+        padding: 0 1.25rem;
+        margin: auto 0;
+        height: 100%;
+    }
+  }
+  
