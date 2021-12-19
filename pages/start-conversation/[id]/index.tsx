@@ -9,6 +9,7 @@ import Conversation from 'common/components/Conversation';
 import { useAppContext } from 'context/state';
 import { DateTime } from 'luxon';
 import { isToday } from 'lib/date';
+import { useRouter } from 'next/router';
 
 const { Title } = Typography;
 
@@ -18,6 +19,7 @@ type StartConversationProps = {
 
 const StartConversation: React.FC<StartConversationProps> = ({ id }) => {
   const user = useAppContext();
+  const router = useRouter();
   const [title, setTitle] = useState<string>('');
   const [newMessage, setNewMessage] = useState<string>('');
   const [messages, setMessages] = useState<Array<ConversationMessage>>([]);
@@ -81,10 +83,19 @@ const StartConversation: React.FC<StartConversationProps> = ({ id }) => {
     }
     return desc;
   };
+
+  const redirectToBack = (): void => {
+    router.back();
+  };
   return (
     <>
-      <div className={styles.header}>
-        <Title level={2}>{title}</Title>
+      <div className={`${styles.header} ${styles.header_with_left_alignment}`}>
+        <Title level={2}>
+          <Button type="link" onClick={redirectToBack}>
+            Back
+          </Button>
+          {title}
+        </Title>
       </div>
       <div className={styles.conversations_wrapper}>
         {messages &&

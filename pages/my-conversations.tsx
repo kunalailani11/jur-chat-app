@@ -48,24 +48,27 @@ const MyConversation: React.FC = () => {
 
   return (
     <>
-      <div className={styles.header}>
+      <div className={`${styles.header} ${styles.header_with_left_alignment}`}>
         <Title level={2}>Your Conversations</Title>
       </div>
 
       <div className={styles.conversations_wrapper}>
         {conversations &&
           conversations?.length > 0 &&
-          conversations?.map((item) => (
-            <div className={styles.single_conversation} key={item.id}>
-              <Conversation
-                title={item.title}
-                sender_name={getValueFromProp(item, 'sender_name')}
-                description={getValueFromProp(item, 'content')}
-                id={item.id}
-                redirectToSpecificConversation={redirectToSpecificConversation}
-              />
-            </div>
-          ))}
+          conversations?.map(
+            (item) =>
+              item.id && (
+                <div className={styles.single_conversation} key={item.id}>
+                  <Conversation
+                    title={item.title}
+                    sender_name={getValueFromProp(item, 'sender_name')}
+                    description={getValueFromProp(item, 'content')}
+                    id={item.id}
+                    redirectToSpecificConversation={redirectToSpecificConversation}
+                  />
+                </div>
+              )
+          )}
       </div>
       <div className={styles.start_conversation_footer}>
         <Button onClick={createNewConversation}>Create New Conversation</Button>

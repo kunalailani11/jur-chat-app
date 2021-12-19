@@ -18,6 +18,10 @@
     }
   }
 
+  &.header_with_left_alignment {
+    align-items: flex-start;
+  }
+
   .sub_content{
     margin-top: 15px !important;
   }
