@@ -6,6 +6,8 @@ const { Content } = Layout;
 
 const ignorePacket = ['ping', 'welcome', 'confirm_subscription'];
 
+const wsEndPoint = '34.122.252.114:3000';
+
 export default function withLayout<TProps>(
   ComposedComponent: React.ComponentType<TProps>
 ): React.ComponentType<TProps> {
@@ -16,7 +18,7 @@ export default function withLayout<TProps>(
       userInfo: { id },
     } = user;
     useEffect(() => {
-      const ws = new WebSocket('ws://34.122.252.114:3000/cable');
+      const ws = new WebSocket(`ws://${wsEndPoint}/cable`);
       ws.onopen = () => {
         ws.send(
           JSON.stringify({
@@ -33,7 +35,7 @@ export default function withLayout<TProps>(
           if (data.type && ignorePacket.includes(data.type)) return false;
           if (data.message?.sender_id == id) return false;
           if (data.message?.contact_ids.indexOf(id) == -1) return false;
-          //show notification alert
+
           notification.open({
             message: data.message.sender_name,
             description: data.message.content,
@@ -46,6 +48,7 @@ export default function withLayout<TProps>(
         ws.close;
       };
     }, []);
+
     return (
       <Layout>
         <Content>

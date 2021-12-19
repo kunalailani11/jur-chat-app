@@ -3,7 +3,7 @@ import { getCookie, AuthCookie } from 'lib/cookies';
 const validateSuccessStatus = (status: number): boolean => status >= 200 && status < 300;
 
 const httpClient = axios.create({
-  baseURL: process?.env?.NEXT_PUBLIC_API_URL || '/api',
+  baseURL: process?.env?.NEXT_PUBLIC_API_URL,
   headers: {
     'Content-Type': 'application/json',
   },

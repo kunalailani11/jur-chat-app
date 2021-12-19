@@ -1,6 +1,10 @@
 import { get, post } from './';
 import { endpoints } from './endpoints';
-import { ConversationType, ConversationMessage } from './models/conversation';
+import {
+  ConversationType,
+  ConversationMessage,
+  CreateConversationType,
+} from './models/conversation';
 
 type conversationPayloadType = {
   title: string;
@@ -19,7 +23,7 @@ const getSpecificMessage = (id: string, messageId: string): Promise<Conversation
   return get<ConversationMessage>(endpoints.specificMessage(id, messageId));
 };
 
-const setNewConversation = (payload: conversationPayloadType): Promise<void> => {
+const setNewConversation = (payload: conversationPayloadType): Promise<CreateConversationType> => {
   return post(endpoints.conversations, payload);
 };
 

@@ -11,3 +11,7 @@ export interface ConversationType {
   last_message: Array<ConversationMessage>;
   recent_messages: Array<ConversationMessage>;
 }
+
+export interface CreateConversationType {
+  id: number;
+}
